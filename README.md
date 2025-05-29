@@ -58,3 +58,21 @@ To push code to this repository, follow these steps:
    ```
    git push -u origin main
    ``` 
+
+
+
+<!-- to create an item
+curl -X POST http://localhost:3000/api/items -H "Content-Type: application/json" -d '{"name": "Notebook", "quantity": 10}' -->
+
+
+<!-- to get all items
+curl http://localhost:3000/api/items -->
+
+<!-- to update an item
+curl -X PUT http://localhost:3000/api/items/683831708ef48640642ec0ef -H "Content-Type: application/json" -d '{"name": "Updated Notebook", "quantity": 15}' -->
+<!-- replace id with actual id -->
+
+to delete item
+curl -X DELETE http://localhost:3000/api/items/683831708ef48640642ec0ef
+<!-- id ki jagah lo id crreate hoke aaegi wo use krni hai -->
+

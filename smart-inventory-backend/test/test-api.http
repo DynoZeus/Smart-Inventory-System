@@ -1,0 +1,23 @@
+### Get all items
+GET http://localhost:5000/api/items
+
+### Create a new item
+POST http://localhost:5000/api/items
+Content-Type: application/json
+
+{
+  "name": "Notebook",
+  "quantity": 10
+}
+
+### Update an item (replace <id> with actual ID)
+PUT http://localhost:5000/api/items/<id>
+Content-Type: application/json
+
+{
+  "name": "Updated Notebook",
+  "quantity": 15
+}
+
+### Delete an item (replace <id> with actual ID)
+DELETE http://localhost:5000/api/items/<id>
