@@ -28,6 +28,7 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
 
   const fetchItems = async () => {
     try {
@@ -120,6 +121,12 @@ export default function HomePage() {
     setNewItem({ name: '', quantity: 0, category: '' });
   };
 
+  // Filtered items based on search
+  const filteredItems = items.filter(item =>
+    (item.name?.toLowerCase() || '').includes(search.toLowerCase()) ||
+    (item.category?.toLowerCase() || '').includes(search.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-sm">
@@ -143,6 +150,17 @@ export default function HomePage() {
             </div>
           </div>
         )}
+
+        {/* Search Bar */}
+        <div className="mb-6 flex justify-end">
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search by name or category..."
+            className="w-full md:w-1/3 px-4 py-2 rounded-md border border-gray-300 bg-white text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition duration-150 ease-in-out"
+          />
+        </div>
 
         {/* Add/Edit Item Form */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
@@ -239,7 +257,7 @@ export default function HomePage() {
                 </svg>
                 <p className="mt-4 text-gray-500">Loading items...</p>
               </div>
-            ) : items.length > 0 ? (
+            ) : filteredItems.length > 0 ? (
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
@@ -251,7 +269,7 @@ export default function HomePage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {items.map((item) => (
+                  {filteredItems.map((item) => (
                     <tr key={item._id} className="hover:bg-gray-50 transition duration-150 ease-in-out">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">{item.name}</div>
