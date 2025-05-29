@@ -2,9 +2,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-ChartJS.register(ArcElement, Tooltip, Legend);
+import { Pie, Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
+ChartJS.register(ArcElement, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
 interface Item {
   _id: string;
@@ -368,6 +368,51 @@ export default function HomePage() {
                   maintainAspectRatio: false,
                 }}
               />
+            </div>
+          ) : (
+            <div className="text-gray-500">No data to display</div>
+          )}
+        </div>
+        {/* Dashboard: Most/Least Stocked Items Bar Chart */}
+        <div className="mb-8 bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-lg font-semibold mb-4">Most & Least Stocked Items</h2>
+          {items.length > 0 ? (
+            <div style={{ height: 300 }}>
+              {(() => {
+                const sorted = [...items].sort((a, b) => b.quantity - a.quantity);
+                const top5 = sorted.slice(0, 5);
+                const bottom5 = sorted.slice(-5).reverse();
+                const barLabels = [...top5.map(i => i.name + ' (Top)'), ...bottom5.map(i => i.name + ' (Low)')];
+                const barData = [...top5.map(i => i.quantity), ...bottom5.map(i => i.quantity)];
+                return (
+                  <Bar
+                    data={{
+                      labels: barLabels,
+                      datasets: [
+                        {
+                          label: 'Quantity',
+                          data: barData,
+                          backgroundColor: [
+                            ...top5.map(() => '#34d399'), // green for top
+                            ...bottom5.map(() => '#f87171'), // red for low
+                          ],
+                        },
+                      ],
+                    }}
+                    options={{
+                      plugins: {
+                        legend: { display: false },
+                      },
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      scales: {
+                        x: { title: { display: true, text: 'Item' } },
+                        y: { title: { display: true, text: 'Quantity' }, beginAtZero: true },
+                      },
+                    }}
+                  />
+                );
+              })()}
             </div>
           ) : (
             <div className="text-gray-500">No data to display</div>
