@@ -32,6 +32,7 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const LOW_STOCK_THRESHOLD = 5;
 
   const fetchItems = async () => {
     try {
@@ -129,6 +130,8 @@ export default function HomePage() {
     (item.name?.toLowerCase() || '').includes(search.toLowerCase()) ||
     (item.category?.toLowerCase() || '').includes(search.toLowerCase())
   );
+
+  const lowStockItems = filteredItems.filter(item => item.quantity < LOW_STOCK_THRESHOLD);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -229,6 +232,14 @@ export default function HomePage() {
           </form>
         </div>
         {/* Items Table */}
+        {lowStockItems.length > 0 && (
+          <div className="mb-4 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-md flex items-center">
+            <svg className="h-6 w-6 text-yellow-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="text-yellow-800 font-medium">{lowStockItems.length} item{lowStockItems.length > 1 ? 's are' : ' is'} low on stock!</span>
+          </div>
+        )}
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-xl font-semibold text-gray-800">Inventory Items</h2>
@@ -255,7 +266,10 @@ export default function HomePage() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {filteredItems.map((item) => (
-                    <tr key={item._id} className="hover:bg-gray-50 transition duration-150 ease-in-out">
+                    <tr
+                      key={item._id}
+                      className={`transition duration-150 ease-in-out ${item.quantity < LOW_STOCK_THRESHOLD ? 'bg-yellow-50' : 'hover:bg-gray-50'}`}
+                    >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">{item.name}</div>
                       </td>
@@ -265,7 +279,17 @@ export default function HomePage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{item.quantity}</div>
+                        <div className="text-sm text-gray-900 flex items-center gap-2">
+                          {item.quantity}
+                          {item.quantity < LOW_STOCK_THRESHOLD && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-200 text-yellow-800">
+                              <svg className="h-4 w-4 mr-1 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              Low
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(item.addedAt).toLocaleDateString()}
