@@ -2,6 +2,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface Item {
   _id: string;
@@ -136,21 +139,6 @@ export default function HomePage() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-400 rounded-r-md">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Search Bar */}
         <div className="mb-6 flex justify-end">
           <input
@@ -161,7 +149,6 @@ export default function HomePage() {
             className="w-full md:w-1/3 px-4 py-2 rounded-md border border-gray-300 bg-white text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm transition duration-150 ease-in-out"
           />
         </div>
-
         {/* Add/Edit Item Form */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
           <div className="px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600">
@@ -241,13 +228,11 @@ export default function HomePage() {
             </div>
           </form>
         </div>
-
         {/* Items Table */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
             <h2 className="text-xl font-semibold text-gray-800">Inventory Items</h2>
           </div>
-          
           <div className="overflow-x-auto">
             {isLoading && !items.length ? (
               <div className="text-center py-12">
@@ -324,6 +309,61 @@ export default function HomePage() {
             )}
           </div>
         </div>
+        {/* Dashboard: Items by Category Pie Chart */}
+        <div className="mt-8 mb-8 bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-lg font-semibold mb-4">Items by Category</h2>
+          {items.length > 0 ? (
+            <div style={{ height: 250 }}>
+              <Pie
+                data={{
+                  labels: Object.keys(items.reduce((acc, item) => {
+                    const cat = item.category || 'Uncategorized';
+                    acc[cat] = (acc[cat] || 0) + 1;
+                    return acc;
+                  }, {} as Record<string, number>)),
+                  datasets: [
+                    {
+                      data: Object.values(items.reduce((acc, item) => {
+                        const cat = item.category || 'Uncategorized';
+                        acc[cat] = (acc[cat] || 0) + 1;
+                        return acc;
+                      }, {} as Record<string, number>)),
+                      backgroundColor: [
+                        '#6366f1', '#a5b4fc', '#f59e42', '#f87171', '#34d399', '#fbbf24', '#60a5fa',
+                      ],
+                    },
+                  ],
+                }}
+                options={{
+                  plugins: {
+                    legend: {
+                      position: 'bottom' as const,
+                    },
+                  },
+                  responsive: true,
+                  maintainAspectRatio: false,
+                }}
+              />
+            </div>
+          ) : (
+            <div className="text-gray-500">No data to display</div>
+          )}
+        </div>
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-400 rounded-r-md">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
