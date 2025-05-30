@@ -25,7 +25,10 @@ export default function VisualizePage() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch('http://localhost:3000/api/items');
+        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+        const response = await fetch('http://localhost:3000/api/items', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
         if (!response.ok) throw new Error('Failed to fetch items');
         const data = await response.json();
         setItems(data);
@@ -78,6 +81,11 @@ export default function VisualizePage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
+      <a href="/" className="fixed top-6 left-6 z-40">
+        <button className="px-5 py-2 rounded-full bg-white/80 text-gray-900 font-medium shadow hover:shadow-lg hover:scale-105 transition-all duration-200 text-sm border border-gray-200">
+          ← Back to Home
+        </button>
+      </a>
       <div className="bg-white/70 backdrop-blur rounded-2xl shadow-xl px-10 py-12 max-w-4xl w-full flex flex-col items-center border border-white/30">
         <h1 className="text-3xl font-bold text-gray-900 text-center mb-2">Visualize Stock</h1>
         <p className="text-base text-gray-700 text-center mb-8">See your inventory data in beautiful charts.</p>
@@ -103,12 +111,6 @@ export default function VisualizePage() {
         ) : (
           <div className="text-center py-8 text-gray-400">No data to display.</div>
         )}
-        <button
-          onClick={() => router.push('/')} 
-          className="mt-8 px-6 py-2 rounded-full bg-gray-100 text-gray-900 font-medium shadow hover:shadow-lg hover:scale-105 transition-all duration-200 text-sm"
-        >
-          ← Back to Home
-        </button>
       </div>
     </div>
   );

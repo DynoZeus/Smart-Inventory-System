@@ -25,7 +25,7 @@ export default function HomePage() {
           <p className="text-lg md:text-2xl text-white/90 text-center drop-shadow mb-6 font-medium">
             Keep track of your item's stock easily.
           </p>
-          <div className="flex flex-row gap-6 w-full justify-center">
+          <div className="flex flex-row gap-6 mt-8 w-full justify-center">
             <Link href="/add">
               <button className="px-7 py-3 rounded-full text-base font-semibold text-gray-900 bg-white/80 shadow hover:shadow-lg hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300">
                 Add Item

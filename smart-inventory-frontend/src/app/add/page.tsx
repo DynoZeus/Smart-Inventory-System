@@ -24,9 +24,13 @@ export default function AddItemPage() {
     setError(null);
     setSuccess(false);
     try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
       const response = await fetch('http://localhost:3000/api/items', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify(form),
       });
       if (!response.ok) throw new Error('Failed to add item');
@@ -41,6 +45,11 @@ export default function AddItemPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
+      <a href="/" className="fixed top-6 left-6 z-40">
+        <button className="px-5 py-2 rounded-full bg-white/80 text-gray-900 font-medium shadow hover:shadow-lg hover:scale-105 transition-all duration-200 text-sm border border-gray-200">
+          ← Back to Home
+        </button>
+      </a>
       <div className="bg-white/70 backdrop-blur rounded-2xl shadow-xl px-10 py-12 max-w-lg w-full flex flex-col items-center border border-white/30">
         <h1 className="text-3xl font-bold text-gray-900 text-center mb-2">Add New Item</h1>
         <p className="text-base text-gray-700 text-center mb-8">Fill in the details below to add a new item to your inventory.</p>
@@ -98,12 +107,6 @@ export default function AddItemPage() {
         {error && (
           <div className="mt-6 p-3 w-full bg-red-100/80 text-red-900 rounded text-center font-medium">{error}</div>
         )}
-        <button
-          onClick={() => router.push('/')} 
-          className="mt-8 px-6 py-2 rounded-full bg-gray-100 text-gray-900 font-medium shadow hover:shadow-lg hover:scale-105 transition-all duration-200 text-sm"
-        >
-          ← Back to Home
-        </button>
       </div>
     </div>
   );
